@@ -67,6 +67,8 @@ namespace WebAPI
             });
             services.AddScoped<IJwtGenerador, JwtGenerador>();
             services.AddScoped<IUsuarioSesion, UsuarioSesion>();
+            services.AddAutoMapper(typeof(Consulta.Manejador));
+            //services.AddAutoMapper(typeof(ConsultaId.Manejador));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,7 +1,9 @@
 ﻿using Aplicacion.ManejadorError;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistencia;
 using System;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,7 +27,10 @@ namespace Aplicacion.Cursos
             }
             public async Task<Unit> Handle(Ejecuta request, CancellationToken cancellationToken)
             {
-                var curso = await _context.Cursos.FindAsync(request.Id);
+                var curso = await _context.Cursos.
+                    Include(x => x.InstructoresLink)
+                    .ThenInclude(x => x.Instructor)
+                    .FirstOrDefaultAsync(x => x.Id == request.Id);
                 if (curso == null)
                 {
                     //throw new Exception("No se puede eliminar el curso");

@@ -1,8 +1,11 @@
 ﻿using Aplicacion.ManejadorError;
+using Dominio;
 using FluentValidation;
 using MediatR;
 using Persistencia;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,6 +20,7 @@ namespace Aplicacion.Cursos
             public string Titulo { get; set; }
             public string Descripcion { get; set; }
             public DateTime? FechaPublicacion { get; set; }
+            public List<Guid> ListaInstructor { get; set; }
         }
 
 
@@ -53,6 +57,31 @@ namespace Aplicacion.Cursos
                 curso.Titulo = request.Titulo ?? curso.Titulo; //si no le modifico el titulo que le deje el que ya tenia
                 curso.Descripcion = request.Descripcion ?? curso.Descripcion;
                 curso.FechaPublicacion = request.FechaPublicacion ?? curso.FechaPublicacion;
+
+                if (request.ListaInstructor != null)
+                {
+                    if (request.ListaInstructor.Count > 0)
+                    {
+                        //Eliminar instructores actuales del curso en la Tabla cursoInstructores
+                        var instructoresBD = _context.CursoInstructores.Where(x => x.CursoId == request.Id).ToList();
+                        foreach (var instructor in instructoresBD)
+                        {
+                            _context.CursoInstructores.Remove(instructor);
+                        }
+                        //fin eliminar
+
+                        //Aqui agrego los nuevos instructores que ingresa el cliente
+                        foreach (var id in request.ListaInstructor)
+                        {
+                            var nuevoinstructor = new CursoInstructor { 
+                                CursoId = request.Id,
+                                InstructorId = id
+                            };
+                            _context.CursoInstructores.Add(nuevoinstructor);
+                        }
+                    }
+                }
+
 
                 var resultado = await _context.SaveChangesAsync();
 
