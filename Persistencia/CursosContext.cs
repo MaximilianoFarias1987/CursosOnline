@@ -1,4 +1,5 @@
 ﻿using Dominio;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Text;
 
 namespace Persistencia
 {
-    public class CursosContext : DbContext
+    public class CursosContext : IdentityDbContext<Usuario>
     {
         public CursosContext(DbContextOptions options) : base(options)
         {
@@ -27,5 +28,6 @@ namespace Persistencia
         public DbSet<CursoInstructor> CursoInstructores { get; set; }
         public DbSet<Instructor> Instructores { get; set; }
         public DbSet<Precio> Precios { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
     }
 }

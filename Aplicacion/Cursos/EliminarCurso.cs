@@ -12,7 +12,7 @@ namespace Aplicacion.Cursos
     {
         public class Ejecuta : IRequest
         {
-            public int Id { get; set; }
+            public Guid Id { get; set; }
         }
 
         public class Manejador : IRequestHandler<Ejecuta>

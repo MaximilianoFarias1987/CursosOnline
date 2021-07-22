@@ -7,12 +7,12 @@ namespace Dominio
 {
     public class Precio
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [Column(TypeName = "decimal(18,4)")] 
         public decimal PrecioActual { get; set; }
         [Column(TypeName = "decimal(18,4)")]
         public decimal Promocion { get; set; }
-        public int CursoId { get; set; }
+        public Guid CursoId { get; set; }
         public Curso Curso { get; set; }
     }
 }
