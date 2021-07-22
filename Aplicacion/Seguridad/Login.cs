@@ -1,4 +1,5 @@
-﻿using Aplicacion.ManejadorError;
+﻿using Aplicacion.Contratos;
+using Aplicacion.ManejadorError;
 using Dominio;
 using FluentValidation;
 using MediatR;
@@ -33,11 +34,13 @@ namespace Aplicacion.Seguridad
         {
             private readonly UserManager<Usuario> _userManager;
             private readonly SignInManager<Usuario> _signInManager;
+            private readonly IJwtGenerador _jwtGenerador;
 
-            public Manejador(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager)
+            public Manejador(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, IJwtGenerador jwtGenerador)
             {
                 _userManager = userManager;
                 _signInManager = signInManager;
+                _jwtGenerador = jwtGenerador;
             }
 
             public async Task<UsuarioData> Handle(Ejecuta request, CancellationToken cancellationToken)
@@ -54,7 +57,7 @@ namespace Aplicacion.Seguridad
                     return new UsuarioData
                     {
                         NombreCompleto = usuario.NombreCompleto,
-                        Token = "esta sera la data del token",
+                        Token = _jwtGenerador.CrearToken(usuario),
                         UserName = usuario.UserName,
                         Email = usuario.Email,
                         Imagen = null
