@@ -1,4 +1,6 @@
+using Dominio;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,8 +24,10 @@ namespace WebAPI
                 var services = ambiente.ServiceProvider;
                 try
                 {
+                    var userManager = services.GetRequiredService<UserManager<Usuario>>();
                     var context = services.GetRequiredService<CursosContext>();
                     context.Database.Migrate();
+                    DataPrueba.InsertarData(context, userManager).Wait();
                 }
                 catch (Exception ex)
                 {
