@@ -52,6 +52,8 @@ namespace Aplicacion.Cursos
 
                 _context.Cursos.Add(curso);
 
+
+
                 var valor = await _context.SaveChangesAsync();
 
                 if (valor > 0)
