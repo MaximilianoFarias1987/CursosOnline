@@ -21,6 +21,8 @@ namespace Aplicacion.Cursos
             public string Descripcion { get; set; }
             public DateTime? FechaPublicacion { get; set; }
             public List<Guid> ListaInstructor { get; set; }
+            public decimal? Precio { get; set; }
+            public decimal? Promocion { get; set; }
         }
 
 
@@ -58,6 +60,27 @@ namespace Aplicacion.Cursos
                 curso.Descripcion = request.Descripcion ?? curso.Descripcion;
                 curso.FechaPublicacion = request.FechaPublicacion ?? curso.FechaPublicacion;
 
+                //Actualizar Precio del curso
+                var precio = _context.Precios.Where(x => x.CursoId == curso.Id).FirstOrDefault();
+                if (precio != null)
+                {
+                    precio.PrecioActual = request.Precio ?? precio.PrecioActual;
+                    precio.Promocion = request.Promocion ?? precio.Promocion;
+                }
+                else
+                {
+                    precio = new Precio
+                    {
+                        Id = Guid.NewGuid(),
+                        PrecioActual = request.Precio ?? 0,
+                        Promocion = request.Promocion ?? 0,
+                        CursoId = curso.Id
+                    };
+                    await _context.Precios.AddAsync(precio);
+                }
+
+
+                //Eliminar instructor para despues modificar
                 if (request.ListaInstructor != null)
                 {
                     if (request.ListaInstructor.Count > 0)
@@ -73,7 +96,8 @@ namespace Aplicacion.Cursos
                         //Aqui agrego los nuevos instructores que ingresa el cliente
                         foreach (var id in request.ListaInstructor)
                         {
-                            var nuevoinstructor = new CursoInstructor { 
+                            var nuevoinstructor = new CursoInstructor
+                            {
                                 CursoId = request.Id,
                                 InstructorId = id
                             };

@@ -27,8 +27,10 @@ namespace Aplicacion.Cursos
             }
             public async Task<Unit> Handle(Ejecuta request, CancellationToken cancellationToken)
             {
-                var curso = await _context.Cursos.
-                    Include(x => x.InstructoresLink)
+                var curso = await _context.Cursos
+                    .Include(x => x.Precio)
+                    .Include(x => x.ComentarioLista)
+                    .Include(x => x.InstructoresLink)
                     .ThenInclude(x => x.Instructor)
                     .FirstOrDefaultAsync(x => x.Id == request.Id);
                 if (curso == null)

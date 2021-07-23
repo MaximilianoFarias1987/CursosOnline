@@ -1,7 +1,8 @@
-﻿using Aplicacion.Instructores.DTOinstructores;
+﻿using Aplicacion.Comentarios.DTOcomentarios;
+using Aplicacion.Instructores.DTOinstructores;
+using Aplicacion.Precios.DTOprecios;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Aplicacion.Cursos.DTOcursos
 {
@@ -13,5 +14,7 @@ namespace Aplicacion.Cursos.DTOcursos
         public DateTime? FechaPublicacion { get; set; }
         public byte[] FotoPortada { get; set; }
         public ICollection<InstructorDTO> Instructores { get; set; }
+        public PrecioDTO Precio { get; set; }
+        public ICollection<ComentarioDTO> Comentarios { get; set; }
     }
 }

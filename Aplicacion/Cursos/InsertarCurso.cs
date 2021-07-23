@@ -21,6 +21,9 @@ namespace Aplicacion.Cursos
 
             //Agrego lo siguiente para representar los id  de los instructores
             public List<Guid> ListaInstructor { get; set; }
+            public decimal Precio { get; set; }
+            public decimal Promocion { get; set; }
+
         }
 
 
@@ -71,6 +74,16 @@ namespace Aplicacion.Cursos
                         _context.CursoInstructores.Add(cursoInstructor);
                     }
                 }
+
+
+                //Agrego un precio al curso
+                var precio = new Precio { 
+                    CursoId = curso.Id,
+                    PrecioActual = request.Precio,
+                    Promocion = request.Promocion,
+                    Id = Guid.NewGuid()
+                };
+                _context.Precios.Add(precio);
 
                 var valor = await _context.SaveChangesAsync();
 
