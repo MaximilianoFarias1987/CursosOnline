@@ -1,11 +1,9 @@
 ﻿using Aplicacion.Instructores;
 using Aplicacion.Instructores.DTOinstructores;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
@@ -30,6 +28,19 @@ namespace WebAPI.Controllers
         public async Task<ActionResult<Unit>> InsertarInstructor(InsertarInstructor.Ejecuta data)
         {
             return await Mediator.Send(data);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Unit>> ActualizarInstructor(Guid id, EditarInstructor.Ejecuta data)
+        {
+            data.Id = id;
+            return await Mediator.Send(data);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Unit>> EliminarInstructor(Guid id)
+        {
+            return await Mediator.Send(new EliminarInstructor.Ejecuta { Id = id });
         }
     }
 }

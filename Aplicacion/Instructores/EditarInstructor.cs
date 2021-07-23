@@ -1,18 +1,19 @@
-﻿using Dominio;
+﻿using Aplicacion.ManejadorError;
 using FluentValidation;
 using MediatR;
 using Persistencia;
 using System;
-using System.Collections.Generic;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Aplicacion.Instructores
 {
-    public class InsertarInstructor
+    public class EditarInstructor
     {
         public class Ejecuta : IRequest
         {
+            public Guid Id { get; set; }
             public string Nombre { get; set; }
             public string Apellido { get; set; }
             public string Grado { get; set; }
@@ -25,7 +26,7 @@ namespace Aplicacion.Instructores
         {
             public Validacion()
             {
-                RuleFor(x => x.Nombre).NotEmpty();
+                RuleFor(x => x.Nombre).NotEmpty().WithMessage("Debe ingresar un titulo");
                 RuleFor(x => x.Apellido).NotEmpty();
                 RuleFor(x => x.Grado).NotEmpty();
             }
@@ -43,25 +44,24 @@ namespace Aplicacion.Instructores
 
             public async Task<Unit> Handle(Ejecuta request, CancellationToken cancellationToken)
             {
-                Guid _cursoId = Guid.NewGuid();
-                var instructor = new Instructor
+                var instructor = await _context.Instructores.FindAsync(request.Id);
+                if (instructor == null)
                 {
-                    Id = _cursoId,
-                    Nombre = request.Nombre,
-                    Apellido = request.Apellido,
-                    Grado = request.Grado
-                };
+                    throw new ManejadorExcepcion(HttpStatusCode.NotFound, new { mensaje = "No se encontro el instructor" });
+                }
 
-                _context.Instructores.Add(instructor);
+                instructor.Nombre = request.Nombre ?? instructor.Nombre; //si no le modifico el titulo que le deje el que ya tenia
+                instructor.Apellido = request.Apellido ?? instructor.Apellido;
+                instructor.Grado = request.Grado ?? instructor.Grado;
 
-                var valor = await _context.SaveChangesAsync();
+                var resultado = await _context.SaveChangesAsync();
 
-                if (valor > 0)
+                if (resultado > 0)
                 {
                     return Unit.Value;
                 }
 
-                throw new Exception("No se pudo insertar el Instructor");
+                throw new Exception("No se guardaron los cambios en el Instructor");
             }
         }
     }

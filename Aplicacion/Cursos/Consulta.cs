@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistencia;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,7 +15,7 @@ namespace Aplicacion.Cursos
     {
         public class ListaCursos : IRequest<List<CursoDTO>>
         {
-            //Esto va a devolver una lista de cursos
+            
         }
 
         public class Manejador : IRequestHandler<ListaCursos, List<CursoDTO>>
@@ -36,9 +37,13 @@ namespace Aplicacion.Cursos
                     .ThenInclude(x => x.Instructor)
                     .ToListAsync();
 
+
                 var cursosDTO = _mapper.Map<List<Curso>, List<CursoDTO>>(cursos);
 
                 return cursosDTO;
+
+
+
             }
         }
     }
