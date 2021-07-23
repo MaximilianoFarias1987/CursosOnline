@@ -3,7 +3,6 @@ using FluentValidation;
 using MediatR;
 using Persistencia;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -49,7 +48,8 @@ namespace Aplicacion.Instructores
                     Id = _cursoId,
                     Nombre = request.Nombre,
                     Apellido = request.Apellido,
-                    Grado = request.Grado
+                    Grado = request.Grado,
+                    FechaCreacion = DateTime.UtcNow
                 };
 
                 _context.Instructores.Add(instructor);

@@ -11,7 +11,7 @@ namespace Persistencia
         {
 
         }
-        public static async Task InsertarData(CursosContext context, UserManager<Usuario> userManager)
+        public static async Task InsertarData(UserManager<Usuario> userManager)
         {
             if (!userManager.Users.Any()) //Si no existe un usuario en la base de datos, que me Inserte un Usuario.
             {

@@ -54,6 +54,7 @@ namespace Aplicacion.Instructores
                 instructor.Apellido = request.Apellido ?? instructor.Apellido;
                 instructor.Grado = request.Grado ?? instructor.Grado;
 
+
                 var resultado = await _context.SaveChangesAsync();
 
                 if (resultado > 0)

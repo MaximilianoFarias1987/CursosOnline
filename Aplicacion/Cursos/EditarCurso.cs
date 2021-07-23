@@ -59,6 +59,7 @@ namespace Aplicacion.Cursos
                 curso.Titulo = request.Titulo ?? curso.Titulo; //si no le modifico el titulo que le deje el que ya tenia
                 curso.Descripcion = request.Descripcion ?? curso.Descripcion;
                 curso.FechaPublicacion = request.FechaPublicacion ?? curso.FechaPublicacion;
+                
 
                 //Actualizar Precio del curso
                 var precio = _context.Precios.Where(x => x.CursoId == curso.Id).FirstOrDefault();

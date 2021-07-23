@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Aplicacion.CursoInstructores.DTOcursoInstructores
 {
@@ -8,5 +6,6 @@ namespace Aplicacion.CursoInstructores.DTOcursoInstructores
     {
         public Guid CursoId { get; set; }
         public Guid InstructorId { get; set; }
+        public DateTime? FechaCreacion { get; set; }
     }
 }
