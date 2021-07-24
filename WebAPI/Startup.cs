@@ -18,6 +18,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Persistencia;
+using Persistencia.DapperConexion;
+using Persistencia.DapperConexion.Paginacion;
 using Seguridad.Token;
 using System.Text;
 using WebAPI.Middleware;
@@ -40,6 +42,8 @@ namespace WebAPI
             {
                 opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            services.Configure<ConexionDapper>(Configuration.GetSection("DefaultConnection"));
 
             services.AddMediatR(typeof(Consulta.Manejador).Assembly);
 
@@ -71,6 +75,9 @@ namespace WebAPI
             services.AddScoped<IJwtGenerador, JwtGenerador>();
             services.AddScoped<IUsuarioSesion, UsuarioSesion>();
             services.AddAutoMapper(typeof(Consulta.Manejador));
+
+            services.AddTransient<IFactoryConnection, FactoryConnection>();
+            services.AddScoped<IPaginacion, PaginacionRepositorio>();
             //services.AddAutoMapper(typeof(ConsultaId.Manejador));
 
             //services.AddControllers().AddNewtonsoftJson(options =>
@@ -110,6 +117,12 @@ namespace WebAPI
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            app.UseSwagger();
+            app.UseSwaggerUI(x =>
+            {
+                x.SwaggerEndpoint("/swagger/v1/swagger.json", "Cursos Online v1");
             });
         }
     }
