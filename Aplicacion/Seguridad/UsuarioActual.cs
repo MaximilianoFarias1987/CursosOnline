@@ -32,6 +32,9 @@ namespace Aplicacion.Seguridad
             {
                 var usuario = await _userManager.FindByNameAsync(_usuarioSesion.ObtenerUsuarioSesion());
 
+                var roles = await _userManager.GetRolesAsync(usuario);
+                var listaRoles = new List<string>(roles);
+
                 if (usuario == null)
                 {
                     throw new ManejadorExcepcion(HttpStatusCode.BadRequest, new { mensaje = "No hay ningún usuario en sesión" });
@@ -40,7 +43,7 @@ namespace Aplicacion.Seguridad
                 return new UsuarioData {
                     NombreCompleto = usuario.NombreCompleto,
                     UserName = usuario.UserName,
-                    Token = _jwtGenerador.CrearToken(usuario),
+                    Token = _jwtGenerador.CrearToken(usuario, listaRoles),
                     Imagen = null,
                     Email = usuario.Email
                 };

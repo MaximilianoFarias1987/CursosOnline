@@ -1,6 +1,7 @@
 ﻿using Aplicacion.Instructores;
 using Aplicacion.Instructores.DTOinstructores;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace WebAPI.Controllers
     [ApiController]
     public class InstructoresController : MiControllerBase
     {
+        [Authorize(Roles = "Admin")] //implemenar roles a los metodos
         [HttpGet]
         public async Task<ActionResult<List<InstructorDTO>>> GetInstructor()
         {

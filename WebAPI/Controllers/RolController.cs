@@ -1,11 +1,8 @@
 ﻿using Aplicacion.Seguridad;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
@@ -43,6 +40,12 @@ namespace WebAPI.Controllers
         public async Task<ActionResult<Unit>> EliminarRolUsuario(EliminarRolUsuario.Ejecuta data)
         {
             return await Mediator.Send(data);
+        }
+
+        [HttpGet("{userName}")]
+        public async Task<ActionResult<List<string>>> ObtenerRolUsuario(string userName)
+        {
+            return await Mediator.Send(new ObtenerRolesPorUsuario.Ejecuta { UserName = userName });
         }
 
     }

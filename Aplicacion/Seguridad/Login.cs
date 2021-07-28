@@ -4,6 +4,7 @@ using Dominio;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -52,12 +53,15 @@ namespace Aplicacion.Seguridad
                 }
 
                 var resultado = await _signInManager.CheckPasswordSignInAsync(usuario, request.Password, false);
+
+                var roles = await _userManager.GetRolesAsync(usuario);
+                var listaRoles = new List<string>(roles);
                 if (resultado.Succeeded)
                 {
                     return new UsuarioData
                     {
                         NombreCompleto = usuario.NombreCompleto,
-                        Token = _jwtGenerador.CrearToken(usuario),
+                        Token = _jwtGenerador.CrearToken(usuario, listaRoles),
                         UserName = usuario.UserName,
                         Email = usuario.Email,
                         Imagen = null

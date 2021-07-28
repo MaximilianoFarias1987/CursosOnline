@@ -7,6 +7,7 @@ namespace Aplicacion.Contratos
 {
     public interface IJwtGenerador
     {
-        string CrearToken(Usuario usuario);
+        string CrearToken(Usuario usuario , List<string> roles);
+
     }
 }

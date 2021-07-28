@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Aplicacion.Seguridad
 {
-    public class RegistrarUsuario
+    public class ActualizarUsuario
     {
         public class Ejecuta : IRequest<UsuarioData>
         {
@@ -47,50 +47,54 @@ namespace Aplicacion.Seguridad
             private readonly CursosContext _context;
             private readonly UserManager<Usuario> _userManager;
             private readonly IJwtGenerador _jwtGenerador;
+            private readonly IPasswordHasher<Usuario> _passwordHasher;
 
-            public Manejador(CursosContext context, UserManager<Usuario> userManager, IJwtGenerador jwtGenerador)
+            public Manejador(CursosContext context, UserManager<Usuario> userManager, IJwtGenerador jwtGenerador, IPasswordHasher<Usuario> passwordHasher)
             {
                 _context = context;
                 _userManager = userManager;
                 _jwtGenerador = jwtGenerador;
+                _passwordHasher = passwordHasher;
             }
 
             public async Task<UsuarioData> Handle(Ejecuta request, CancellationToken cancellationToken)
             {
-                var existeEmail = await _context.Users.Where(x => x.Email == request.Email).AnyAsync();
-                if (existeEmail)
+                var usuario = await _userManager.FindByNameAsync(request.UserName);
+
+                if (usuario == null)
                 {
-                    throw new ManejadorExcepcion(HttpStatusCode.BadRequest, new { mensaje = "Ya existe un usuario registrado con este Email" });
+                    throw new ManejadorExcepcion(HttpStatusCode.NotFound, new { mensaje = $"No existe un usuario con el nombre {request.UserName}" });
                 }
 
-                var existeuserName = await _context.Users.Where(x => x.UserName == request.UserName).AnyAsync();
-                if (existeuserName)
+                //valido de que el email no lo tenga otro usuario q sea unico
+                var email = await _context.Users.Where(x => x.Email == request.Email && x.UserName != request.UserName).AnyAsync();
+                if (email)
                 {
-                    throw new ManejadorExcepcion(HttpStatusCode.BadRequest, new { mensaje = "Ya existe un usuario registrado con este UserName" });
+                    throw new ManejadorExcepcion(HttpStatusCode.NotFound, new { mensaje = $"Ya existe un usuario con el email {request.Apellido}" });
                 }
 
-                var usuario = new Usuario
-                {
-                    NombreCompleto = request.Nombre + " " + request.Apellido,
-                    Email = request.Email,
-                    UserName = request.UserName
-                };
+                usuario.NombreCompleto = request.Nombre + " " + request.Apellido;
+                usuario.PasswordHash = _passwordHasher.HashPassword(usuario, request.Password); //De esta manera encrypto el password
+                usuario.Email = request.Email;
 
-                var resultado = await _userManager.CreateAsync(usuario, request.Password);
+                var resultado = await _userManager.UpdateAsync(usuario);
+
+                //obtener lista de roles
+                var roles = await _userManager.GetRolesAsync(usuario);
+                var listaRoles = new List<string>(roles);
 
                 if (resultado.Succeeded)
                 {
-                    return new UsuarioData { 
+                    return new UsuarioData {
                         NombreCompleto = usuario.NombreCompleto,
-                        Token = _jwtGenerador.CrearToken(usuario, null),
+                        UserName = usuario.UserName,
                         Email = usuario.Email,
-                        UserName = usuario.UserName
+                        Token = _jwtGenerador.CrearToken(usuario, listaRoles)
                     };
                 }
 
-                throw new Exception("No se pudo agregar al nuevo usuario");
+                throw new Exception($"No se pudo actualizar el usuario {request.UserName}");
             }
         }
     }
 }
-
