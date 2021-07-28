@@ -1,19 +1,16 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Text;
 
 namespace Persistencia.DapperConexion
 {
     public class FactoryConnection : IFactoryConnection
     {
         private IDbConnection _connection;
-        private readonly IOptions<ConexionDapper> conDapper;
-        public FactoryConnection(IDbConnection connection)
+        private readonly IOptions<ConexionDapper> _conDapper;
+        public FactoryConnection(IOptions<ConexionDapper> conDapper)
         {
-            _connection = connection;
+            _conDapper = conDapper;
         }
         public void CloseConnection()
         {
@@ -27,9 +24,9 @@ namespace Persistencia.DapperConexion
         {
             if (_connection == null)
             {
-                _connection = new SqlConnection(conDapper.Value.DefaultConnection);
+                _connection = new SqlConnection(_conDapper.Value.DefaultConnection);
             }
-            if(_connection.State != ConnectionState.Open)
+            if (_connection.State != ConnectionState.Open)
             {
                 _connection.Open();
             }

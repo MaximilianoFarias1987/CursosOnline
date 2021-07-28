@@ -15,9 +15,9 @@ namespace Persistencia.DapperConexion.Paginacion
         {
             _factoryConnection = factoryConnection;
         }
-        public async Task<PaginacionModel> DevolverPaginacion(string storeProcedure, int numPagina, int cantElementos, IDictionary<string, object> parametrosFiltro, string ordenamientoColumna)
+        public async Task<PaginacionModel> devolverPaginacion(string storeProcedure, int numeroPagina, int cantidadElementos, IDictionary<string, object> parametrosFiltro, string ordenamientoColumna)
         {
-            var paginacionModel = new PaginacionModel();
+            PaginacionModel paginacionModel = new PaginacionModel();
             List<IDictionary<string, object>> listaReporte = null;
             int totalRecords = 0;
             int totalPaginas = 0;
@@ -32,8 +32,8 @@ namespace Persistencia.DapperConexion.Paginacion
                 }
 
                 //parametros de entrada
-                parametros.Add("@NumeroPagina", numPagina);
-                parametros.Add("@CantidadElementos", cantElementos);
+                parametros.Add("@NumeroPagina", numeroPagina);
+                parametros.Add("@CantidadElementos", cantidadElementos);
                 parametros.Add("@Ordenamiento", ordenamientoColumna);
                 //parametros de salida
                 parametros.Add("@TotalRecords", totalRecords, DbType.Int32, ParameterDirection.Output);

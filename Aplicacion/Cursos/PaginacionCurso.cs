@@ -1,8 +1,6 @@
 ﻿using MediatR;
 using Persistencia.DapperConexion.Paginacion;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,11 +25,11 @@ namespace Aplicacion.Cursos
 
             public async Task<PaginacionModel> Handle(Ejecuta request, CancellationToken cancellationToken)
             {
-                var storedProcedure = "usp_obtener_paginacion";
+                var storedProcedure = "usp_obtener_curso_paginacion2";
                 var ordenamiento = "Titulo";
                 var parametros = new Dictionary<string, object>();
                 parametros.Add("NombreCurso", request.Titulo);
-                return await _paginacion.DevolverPaginacion(storedProcedure, request.NumeroPagina, request.CantidadElementos, parametros, ordenamiento);
+                return await _paginacion.devolverPaginacion(storedProcedure, request.NumeroPagina, request.CantidadElementos, parametros, ordenamiento);
             }
         }
     }

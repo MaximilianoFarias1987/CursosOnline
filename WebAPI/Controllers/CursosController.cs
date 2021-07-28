@@ -55,7 +55,7 @@ namespace WebAPI.Controllers
 
 
         [HttpPost("report")]
-        public async Task<ActionResult<PaginacionModel>> Reporte(PaginacionCurso.Ejecuta data)
+        public async Task<ActionResult<PaginacionModel>> Report(PaginacionCurso.Ejecuta data)
         {
             return await Mediator.Send(data);
         }

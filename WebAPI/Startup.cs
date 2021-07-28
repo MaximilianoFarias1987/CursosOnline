@@ -43,7 +43,8 @@ namespace WebAPI
                 opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            services.Configure<ConexionDapper>(Configuration.GetSection("DefaultConnection"));
+            services.AddOptions();
+            services.Configure<ConexionDapper>(Configuration.GetSection("ConnectionStrings"));
 
             services.AddMediatR(typeof(Consulta.Manejador).Assembly);
 
@@ -52,10 +53,12 @@ namespace WebAPI
                 var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
                 opt.Filters.Add(new AuthorizeFilter(policy));
             })
-                .AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<InsertarCurso>());
+            .AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<InsertarCurso>());
 
             var builder = services.AddIdentityCore<Usuario>();
             var identityBuilder = new IdentityBuilder(builder.UserType, builder.Services);
+            identityBuilder.AddRoles<IdentityRole>();
+            identityBuilder.AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<Usuario, IdentityRole>>();
             identityBuilder.AddEntityFrameworkStores<CursosContext>();
             identityBuilder.AddSignInManager<SignInManager<Usuario>>();
             services.TryAddSingleton<ISystemClock, SystemClock>();
@@ -78,11 +81,7 @@ namespace WebAPI
 
             services.AddTransient<IFactoryConnection, FactoryConnection>();
             services.AddScoped<IPaginacion, PaginacionRepositorio>();
-            //services.AddAutoMapper(typeof(ConsultaId.Manejador));
-
-            //services.AddControllers().AddNewtonsoftJson(options =>
-            //options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            //);
+            
 
             services.AddSwaggerGen(c =>
             {
@@ -124,6 +123,9 @@ namespace WebAPI
             {
                 x.SwaggerEndpoint("/swagger/v1/swagger.json", "Cursos Online v1");
             });
+
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
         }
     }
 }
