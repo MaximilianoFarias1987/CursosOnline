@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,8 +19,7 @@ namespace Aplicacion.Seguridad
     {
         public class Ejecuta : IRequest<UsuarioData>
         {
-            public string Nombre { get; set; }
-            public string Apellido { get; set; }
+            public string NombreCompleto { get; set; }
             public string Email { get; set; }
             public string Password { get; set; }
             public string UserName { get; set; }
@@ -33,8 +31,7 @@ namespace Aplicacion.Seguridad
         {
             public Validacion()
             {
-                RuleFor(x => x.Nombre).NotEmpty();
-                RuleFor(x => x.Apellido).NotEmpty();
+                RuleFor(x => x.NombreCompleto).NotEmpty();
                 RuleFor(x => x.Email).NotEmpty();
                 RuleFor(x => x.Password).NotEmpty();
                 RuleFor(x => x.UserName).NotEmpty();
@@ -70,10 +67,10 @@ namespace Aplicacion.Seguridad
                 var email = await _context.Users.Where(x => x.Email == request.Email && x.UserName != request.UserName).AnyAsync();
                 if (email)
                 {
-                    throw new ManejadorExcepcion(HttpStatusCode.NotFound, new { mensaje = $"Ya existe un usuario con el email {request.Apellido}" });
+                    throw new ManejadorExcepcion(HttpStatusCode.NotFound, new { mensaje = $"Ya existe un usuario con el email {request.Email}" });
                 }
 
-                usuario.NombreCompleto = request.Nombre + " " + request.Apellido;
+                usuario.NombreCompleto = request.NombreCompleto;
                 usuario.PasswordHash = _passwordHasher.HashPassword(usuario, request.Password); //De esta manera encrypto el password
                 usuario.Email = request.Email;
 
@@ -85,7 +82,8 @@ namespace Aplicacion.Seguridad
 
                 if (resultado.Succeeded)
                 {
-                    return new UsuarioData {
+                    return new UsuarioData
+                    {
                         NombreCompleto = usuario.NombreCompleto,
                         UserName = usuario.UserName,
                         Email = usuario.Email,
