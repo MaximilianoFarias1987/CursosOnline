@@ -8,10 +8,11 @@ import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import AppNavbar from './components/navegacion/AppNavbar';
 import { useStateValue } from './contexto/store';
 import { obtenerUsuarioActual } from './actions/UsuarioAction';
+import RutaSegura from './components/navegacion/RutaSegura';
 
 function App() {
   //El useStateValue me permite hacer uso de las variables globales
-  const [{sesionUsuario, openSnackbar}, dispatch] = useStateValue();
+  const [{openSnackbar}, dispatch] = useStateValue();
   // const [{openSnackbar}, dispatch] = useStateValue();
 
   //Creo una variable local que la uso como bandera para saber si hay un usuario en sesion
@@ -27,7 +28,10 @@ function App() {
     }
   }, [iniciaApp]);
 
-  return (
+  //Lo que voy a hacer a continuacion es decir que cuando iniciaApp sea false que no cargue nada
+  // y si es true que cargue el contenido
+
+  return iniciaApp === false ? null : (
     <React.Fragment>
       <Snackbar 
         anchorOrigin={{vertical:'bottom', horizontal:'center'}} 
@@ -60,8 +64,14 @@ function App() {
                 path="/auth/registrar"
                 component={RegistrarUsuario}
               />
-              <Route exact path="/auth/perfil" component={PerfilUsuario} />
-              <Route exact path="/" component={PerfilUsuario} />
+              {/* <Route exact path="/auth/perfil" component={PerfilUsuario} /> */}
+
+              <RutaSegura exact path="/auth/perfil" component={PerfilUsuario} />
+
+              {/* <Route exact path="/" component={PerfilUsuario} /> */}
+
+              <RutaSegura exact path="/" component={PerfilUsuario} />
+
             </Switch>
           </Grid>
         </MuithemeProvider>

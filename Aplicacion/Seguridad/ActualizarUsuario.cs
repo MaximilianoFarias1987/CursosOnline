@@ -23,6 +23,7 @@ namespace Aplicacion.Seguridad
             public string Email { get; set; }
             public string Password { get; set; }
             public string UserName { get; set; }
+            public ImagenGeneral ImagenPerfil { get; set; }
         }
 
 
@@ -70,6 +71,36 @@ namespace Aplicacion.Seguridad
                     throw new ManejadorExcepcion(HttpStatusCode.NotFound, new { mensaje = $"Ya existe un usuario con el email {request.Email}" });
                 }
 
+                if (request.ImagenPerfil != null)
+                {
+                    //Valido si hay o no una imagen o documento
+                    var resultadoImagen = await _context.Documentos.Where(x => x.ObjetoReferencia == new Guid(usuario.Id)).FirstOrDefaultAsync();
+                    if (resultadoImagen == null)
+                    {
+                        //Si es null agrego la nueva imagen
+                        var imagen = new Documento
+                        {
+                            Contenido = System.Convert.FromBase64String(request.ImagenPerfil.Data),
+                            Nombre = request.ImagenPerfil.Nombre,
+                            Extension = request.ImagenPerfil.Extension,
+                            ObjetoReferencia = new Guid(usuario.Id),
+                            Id = Guid.NewGuid(),
+                            FechaCreacion = DateTime.UtcNow
+                        };
+
+                        _context.Documentos.Add(imagen);
+                    }
+                    else
+                    {
+                        //Si no es null, la actualizo o dejo la que ya esta
+                        resultadoImagen.Contenido = System.Convert.FromBase64String(request.ImagenPerfil.Data);
+                        resultadoImagen.Nombre = request.ImagenPerfil.Nombre;
+                        resultadoImagen.Extension = request.ImagenPerfil.Extension;
+                    }
+                }
+
+
+
                 usuario.NombreCompleto = request.NombreCompleto;
                 usuario.PasswordHash = _passwordHasher.HashPassword(usuario, request.Password); //De esta manera encrypto el password
                 usuario.Email = request.Email;
@@ -80,6 +111,20 @@ namespace Aplicacion.Seguridad
                 var roles = await _userManager.GetRolesAsync(usuario);
                 var listaRoles = new List<string>(roles);
 
+                var imagenPerfil = await _context.Documentos.Where(x => x.ObjetoReferencia == new Guid(usuario.Id)).FirstAsync();
+
+                ImagenGeneral imagenGeneral = null;
+                if (imagenPerfil != null)
+                {
+                    imagenGeneral = new ImagenGeneral
+                    {
+                        Data = Convert.ToBase64String(imagenPerfil.Contenido),
+                        Nombre = imagenPerfil.Nombre,
+                        Extension = imagenPerfil.Extension
+                    };
+
+
+                }
                 if (resultado.Succeeded)
                 {
                     return new UsuarioData
@@ -87,7 +132,8 @@ namespace Aplicacion.Seguridad
                         NombreCompleto = usuario.NombreCompleto,
                         UserName = usuario.UserName,
                         Email = usuario.Email,
-                        Token = _jwtGenerador.CrearToken(usuario, listaRoles)
+                        Token = _jwtGenerador.CrearToken(usuario, listaRoles),
+                        ImagenPerfil = imagenGeneral
                     };
                 }
 

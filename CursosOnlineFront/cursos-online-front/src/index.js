@@ -11,7 +11,7 @@ ReactDOM.render(
   <React.StrictMode>
     <StateProvider initialState={initialState} reducer={mainReducer}>
     <App />
-    </StateProvider>
+    </StateProvider>,
   </React.StrictMode>,
   document.getElementById('root')
 );

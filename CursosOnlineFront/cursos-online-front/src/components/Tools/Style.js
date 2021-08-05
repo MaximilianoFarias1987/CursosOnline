@@ -15,8 +15,8 @@ const style = {
     avatar : {
         margin : 5,
         backgroundColor : '#1976d2',
-        width : 60,
-        height : 60
+        width : 150,
+        height : 150
     },
     icon : {
         fontSize : 40

@@ -3,9 +3,12 @@ import React, { useState } from 'react';
 import style from '../Tools/Style';
 import LockIcon from '@material-ui/icons/Lock';
 import { loginUsuario } from '../../actions/UsuarioAction';
+import { withRouter } from 'react-router-dom';
+import { useStateValue } from '../../contexto/store';
 
 
-const Login = () => {
+const Login = (props) => {
+    const [{usuarioSesion}, dispatch] = useStateValue();
     
     const [usuario, setUsuario] = useState({
         email : '',
@@ -22,9 +25,22 @@ const Login = () => {
     
     const login = e => {
         e.preventDefault();
-        loginUsuario(usuario).then(response => {
-            console.log('Login exitoso ', response);
-            window.localStorage.setItem("token_seguridad", response.data.token);
+        loginUsuario(usuario, dispatch).then(response => {
+            
+            if (response.status === 200) {
+                window.localStorage.setItem("token_seguridad", response.data.token);
+                props.history.push("/");
+            }else{
+                dispatch({
+                    type : "OPEN_SNACKBAR",
+                    openMensaje : {
+                        open : true,
+                        mensaje : "Las credenciales del usuario son incorrectas"
+                    }
+                })
+            }
+
+            
         })
     }
 
@@ -39,7 +55,7 @@ const Login = () => {
                     <TextField variant='outlined' value={usuario.email || ""} onChange={ingresarValorMemoria} label='Ingrese su email' name='email' fullWidth margin='normal'/>
                     <TextField variant='outlined' value={usuario.password || ""} onChange={ingresarValorMemoria} type='password' label='Ingrese password' name='password' fullWidth margin='normal'/>
                     <Button type='submit' onClick={login} fullWidth variant='contained' color='primary' style={style.submit}>
-                        Imiciar sesión
+                        Iniciar sesión
                     </Button>
                 </form>
             </div>
@@ -47,4 +63,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default withRouter(Login);
