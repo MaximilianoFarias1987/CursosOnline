@@ -6,11 +6,19 @@ const instancia = axios.create();
 instancia.CancelToken = axios.CancelToken;
 instancia.isCancel = axios.isCancel
 
-export const registrarUsuario = usuario =>{
+
+export const registrarUsuario = (usuario, dispatch) =>{
     return new Promise((resolve, eject) =>{
         instancia.post('/Usuario/registrar', usuario).then(response=>{
+            dispatch({
+                type : "OPEN_SNACKBAR",
+                openMensaje : {
+                    open : true,
+                    mensaje : "Se guardaron exitosamente los cambios en Perfil Usuario"
+                }
+            });
             resolve(response);
-        });
+        }).catch(error => { resolve(error.response); });
     });
 }
 

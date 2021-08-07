@@ -9,6 +9,7 @@ import AppNavbar from './components/navegacion/AppNavbar';
 import { useStateValue } from './contexto/store';
 import { obtenerUsuarioActual } from './actions/UsuarioAction';
 import RutaSegura from './components/navegacion/RutaSegura';
+import NuevoCurso from './components/cursos/NuevoCurso';
 
 function App() {
   //El useStateValue me permite hacer uso de las variables globales
@@ -71,6 +72,8 @@ function App() {
               {/* <Route exact path="/" component={PerfilUsuario} /> */}
 
               <RutaSegura exact path="/" component={PerfilUsuario} />
+
+              <RutaSegura exact path="/curso/nuevo" component={NuevoCurso} />
 
             </Switch>
           </Grid>

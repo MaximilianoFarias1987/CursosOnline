@@ -28,7 +28,7 @@ namespace Aplicacion.Documentos
             }
             public async Task<ArchivoGenerico> Handle(Ejecuta request, CancellationToken cancellationToken)
             {
-                var archivo = await _context.Documentos.Where(x => x.ObjetoReferencia == request.Id).FirstAsync();
+                var archivo = await _context.Documentos.Where(x => x.ObjetoReferencia == request.Id).FirstOrDefaultAsync();
                 if (archivo == null)
                 {
                     throw new ManejadorExcepcion(System.Net.HttpStatusCode.NotFound, new { mensaje = "No se encontro el archivo" });

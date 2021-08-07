@@ -2,9 +2,11 @@ import { Button, Container, Grid, TextField, Typography } from "@material-ui/cor
 import React, { useState } from "react";
 import style from "../Tools/Style";
 import { registrarUsuario } from "../../actions/UsuarioAction";
+import { useStateValue } from "../../contexto/store";
 
 const RegistrarUsuario = () => {
 
+    const [{openSnackbar}, dispatch] = useStateValue();
     //Obtengo los valores del formulario
     const [usuario, setUsuario] = useState({
         NombreCompleto : '',
@@ -25,9 +27,33 @@ const RegistrarUsuario = () => {
     //Mando los datos a la api
     const registrar = e =>{
         e.preventDefault();
-        registrarUsuario(usuario).then(response => {
-            console.log('Se registro el usuario con exito', response);
-            window.localStorage.setItem("token_seguridad", response.data.token);
+        registrarUsuario(usuario,dispatch).then(response => {
+            // console.log('Se registro el usuario con exito', response);
+            // window.localStorage.setItem("token_seguridad", response.data.token);
+            if(response.status === 200) {
+               
+                // console.log('Se registro el usuario con exito', response);
+                window.localStorage.setItem("token_seguridad", response.data.token);
+            }else{
+                if (response.data.errores === null || typeof response.data.errores === 'undefined') {
+                    dispatch({
+                        type : "OPEN_SNACKBAR",
+                        openMensaje : {
+                            open : true,
+                            mensaje : "Errores al intentar registrar en : " + Object.keys(response.data.errors)
+                        }
+                    });
+                }else{
+                    dispatch({
+                        type : "OPEN_SNACKBAR",
+                        openMensaje : {
+                            open : true,
+                            mensaje : "Errores al intentar registrar en : " + response.data.errores.mensaje
+                        }
+                    });
+                }
+                console.log(response);
+            }
         });
     }
 
