@@ -17,3 +17,13 @@ export const guardarCurso = async (curso, imagen) => {
 //Lo que hago es asignar el valor de los endpoints de cursos y imagen al igual que sus promesas y luego
 //en la condicion digo que si imagen existe, entonces que me devuelva todo,
 // pero si no existe que e devuelva solo lo de curso
+
+//PAGINACION
+
+export const paginacionCurso = (paginador) => {
+    return new Promise((resolve, eject) => {
+        HttpCliente.post('/cursos/report', paginador).then(response => {
+            resolve(response);
+        })
+    })
+}
