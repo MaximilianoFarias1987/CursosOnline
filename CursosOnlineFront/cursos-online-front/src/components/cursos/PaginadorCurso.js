@@ -17,7 +17,7 @@ const PaginadorCurso = () => {
     })
 
     const [textoBusqueda, setTextoBusqueda] = useState('');
-    const typingBuscadortexto = ControlTyping(textoBusqueda, 0);
+    const typingBuscadortexto = ControlTyping(textoBusqueda, 0); //Si quiero que pase un tiempo sin escribir para que  tome datos le agrego
 
     useEffect(() => {
         
